@@ -41,7 +41,25 @@ iframe {
 }
 </style>
 </head>
+<button
+    id="webButton"
+    style="
+        position:fixed;
+        right:40px;
+        top:40px;
+        z-index:999998;
+        padding:25px 40px;
+        font-size:28px;
+    "
+>
+    APRI WIKIPEDIA
+</button>
 
+<script>
+document.getElementById("webButton").onclick = function() {
+    location.href = "https://it.wikipedia.org/wiki/Italia";
+};
+</script>
 <body>
 
 <iframe

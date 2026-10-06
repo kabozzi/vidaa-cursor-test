@@ -4,60 +4,24 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>VIDAA Virtual Mouse V2</title>
+<title>VIDAA Mouse - Web Test</title>
 
 <style>
 html, body {
     margin: 0;
-    padding: 0;
-    background: #111;
-    color: white;
-    font-family: Arial, sans-serif;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: black;
 }
 
-body {
-    min-height: 3000px;
-    padding: 40px;
-    box-sizing: border-box;
+iframe {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
 }
-
-h1 {
-    font-size: 42px;
-}
-
-.info {
-    font-size: 24px;
-    line-height: 1.5;
-    margin-bottom: 50px;
-}
-
-.button {
-    width: 500px;
-    height: 100px;
-    margin: 35px 0;
-
-    background: #333;
-    border: 3px solid #777;
-    border-radius: 20px;
-
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
-    font-size: 32px;
-    font-weight: bold;
-}
-
-.button:hover {
-    border-color: white;
-}
-
-.button.selected {
-    background: green;
-    border-color: white;
-}
-
-/* CURSORE */
 
 #cursor {
     position: fixed;
@@ -73,71 +37,16 @@ h1 {
 
     pointer-events: none;
 
-    box-sizing: border-box;
-
     transform: translate(-50%, -50%);
-}
-
-/* piccolo mirino */
-
-#cursor::after {
-    content: "";
-
-    position: absolute;
-
-    left: 50%;
-    top: 50%;
-
-    width: 6px;
-    height: 6px;
-
-    background: white;
-    border-radius: 50%;
-
-    transform: translate(-50%, -50%);
-}
-
-#status {
-    position: fixed;
-
-    left: 20px;
-    bottom: 20px;
-
-    background: rgba(0,0,0,.8);
-
-    padding: 12px 18px;
-
-    border-radius: 10px;
-
-    font-size: 18px;
-
-    z-index: 999998;
 }
 </style>
 </head>
 
 <body>
 
-<h1>VIDAA Virtual Mouse V2</h1>
-
-<div class="info">
-    Usa le frecce del telecomando per muovere il cursore.<br>
-    Premi OK per cliccare.<br>
-    Porta il cursore vicino al bordo dello schermo per scorrere.
-</div>
-
-<div class="button">PULSANTE 1</div>
-<div class="button">PULSANTE 2</div>
-<div class="button">PULSANTE 3</div>
-<div class="button">PULSANTE 4</div>
-<div class="button">PULSANTE 5</div>
-<div class="button">PULSANTE 6</div>
-<div class="button">PULSANTE 7</div>
-<div class="button">PULSANTE 8</div>
-<div class="button">PULSANTE 9</div>
-<div class="button">PULSANTE 10</div>
-
-<div id="status">Mouse pronto</div>
+<iframe
+    src="https://it.wikipedia.org/wiki/Italia">
+</iframe>
 
 <div id="cursor"></div>
 
@@ -146,81 +55,14 @@ h1 {
 let x = window.innerWidth / 2;
 let y = window.innerHeight / 2;
 
-let speed = 22;
+const speed = 22;
 
 const cursor = document.getElementById("cursor");
-const status = document.getElementById("status");
-
 
 function updateCursor() {
 
     cursor.style.left = x + "px";
     cursor.style.top = y + "px";
-
-    updateStatus();
-
-    checkScroll();
-}
-
-
-function updateStatus() {
-
-    const element = document.elementFromPoint(x, y);
-
-    if (element && element.closest(".button")) {
-
-        status.textContent = "OK = seleziona";
-
-    } else {
-
-        status.textContent = "Mouse pronto";
-
-    }
-}
-
-
-function checkScroll() {
-
-    const margin = 100;
-
-    if (y > window.innerHeight - margin) {
-
-        window.scrollBy({
-            top: 35,
-            behavior: "auto"
-        });
-
-    }
-
-    if (y < margin) {
-
-        window.scrollBy({
-            top: -35,
-            behavior: "auto"
-        });
-
-    }
-}
-
-
-function clickAtCursor() {
-
-    const element = document.elementFromPoint(x, y);
-
-    if (!element)
-        return;
-
-    const button = element.closest(".button");
-
-    if (button) {
-
-        button.classList.add("selected");
-
-        button.textContent = "SELEZIONATO ✓";
-
-        status.textContent = "CLICK!";
-
-    }
 
 }
 
@@ -230,74 +72,37 @@ document.addEventListener("keydown", function(event) {
     switch (event.key) {
 
         case "ArrowLeft":
-
             x -= speed;
-
             break;
-
 
         case "ArrowRight":
-
             x += speed;
-
             break;
-
 
         case "ArrowUp":
-
             y -= speed;
-
             break;
-
 
         case "ArrowDown":
-
             y += speed;
-
             break;
-
-
-        case "Enter":
-
-        case "OK":
-
-        case "Accept":
-
-            clickAtCursor();
-
-            break;
-
     }
-
-
-    /* limite sinistro */
 
     if (x < 5)
         x = 5;
 
-
-    /* limite destro */
-
     if (x > window.innerWidth - 5)
         x = window.innerWidth - 5;
-
-
-    /* limite superiore */
 
     if (y < 5)
         y = 5;
 
-
-    /* limite inferiore */
-
     if (y > window.innerHeight - 5)
         y = window.innerHeight - 5;
-
 
     updateCursor();
 
 });
-
 
 updateCursor();
 

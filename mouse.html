@@ -1,68 +1,130 @@
 <!DOCTYPE html>
-<html>
+<html lang="it">
 <head>
 <meta charset="UTF-8">
-<title>VIDAA Mouse Test</title>
-<style>
-* { box-sizing:border-box; }
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-html,body {
-    margin:0;
-    padding:0;
-    background:#111;
-    color:white;
-    font-family:Arial,sans-serif;
+<title>VIDAA Virtual Mouse V2</title>
+
+<style>
+html, body {
+    margin: 0;
+    padding: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
-#page {
-    padding:40px;
-    min-height:2000px;
+body {
+    min-height: 3000px;
+    padding: 40px;
+    box-sizing: border-box;
 }
 
 h1 {
-    font-size:42px;
+    font-size: 42px;
 }
 
-p {
-    font-size:28px;
+.info {
+    font-size: 24px;
+    line-height: 1.5;
+    margin-bottom: 50px;
 }
 
 .button {
-    display:block;
-    width:500px;
-    margin:40px 0;
-    padding:35px;
-    background:#333;
-    border-radius:18px;
-    font-size:32px;
-    text-align:center;
+    width: 500px;
+    height: 100px;
+    margin: 35px 0;
+
+    background: #333;
+    border: 3px solid #777;
+    border-radius: 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    font-size: 32px;
+    font-weight: bold;
+}
+
+.button:hover {
+    border-color: white;
 }
 
 .button.selected {
-    outline:6px solid yellow;
+    background: green;
+    border-color: white;
 }
 
+/* CURSORE */
+
 #cursor {
-    position:fixed;
-    width:30px;
-    height:30px;
-    border:4px solid red;
-    border-radius:50%;
-    pointer-events:none;
-    z-index:999999;
-    transform:translate(-50%,-50%);
+    position: fixed;
+
+    width: 34px;
+    height: 34px;
+
+    background: red;
+    border: 4px solid white;
+    border-radius: 50%;
+
+    z-index: 999999;
+
+    pointer-events: none;
+
+    box-sizing: border-box;
+
+    transform: translate(-50%, -50%);
+}
+
+/* piccolo mirino */
+
+#cursor::after {
+    content: "";
+
+    position: absolute;
+
+    left: 50%;
+    top: 50%;
+
+    width: 6px;
+    height: 6px;
+
+    background: white;
+    border-radius: 50%;
+
+    transform: translate(-50%, -50%);
+}
+
+#status {
+    position: fixed;
+
+    left: 20px;
+    bottom: 20px;
+
+    background: rgba(0,0,0,.8);
+
+    padding: 12px 18px;
+
+    border-radius: 10px;
+
+    font-size: 18px;
+
+    z-index: 999998;
 }
 </style>
 </head>
 
 <body>
 
-<div id="page">
+<h1>VIDAA Virtual Mouse V2</h1>
 
-<h1>VIDAA Mouse Test</h1>
-
-<p>Muovi il cursore con le frecce.</p>
-<p>Premi OK per cliccare.</p>
+<div class="info">
+    Usa le frecce del telecomando per muovere il cursore.<br>
+    Premi OK per cliccare.<br>
+    Porta il cursore vicino al bordo dello schermo per scorrere.
+</div>
 
 <div class="button">PULSANTE 1</div>
 <div class="button">PULSANTE 2</div>
@@ -72,73 +134,172 @@ p {
 <div class="button">PULSANTE 6</div>
 <div class="button">PULSANTE 7</div>
 <div class="button">PULSANTE 8</div>
+<div class="button">PULSANTE 9</div>
+<div class="button">PULSANTE 10</div>
 
-</div>
+<div id="status">Mouse pronto</div>
 
 <div id="cursor"></div>
 
 <script>
 
-let x = innerWidth / 2;
-let y = 250;
+let x = window.innerWidth / 2;
+let y = window.innerHeight / 2;
 
-const step = 20;
+let speed = 22;
+
 const cursor = document.getElementById("cursor");
+const status = document.getElementById("status");
 
-function draw() {
+
+function updateCursor() {
+
     cursor.style.left = x + "px";
     cursor.style.top = y + "px";
+
+    updateStatus();
+
+    checkScroll();
 }
 
-function clickCursor() {
 
-    const element = document.elementFromPoint(x,y);
+function updateStatus() {
 
-    if (element && element.classList.contains("button")) {
+    const element = document.elementFromPoint(x, y);
 
-        element.style.background = "#087f23";
-        element.textContent = "SELEZIONATO ✓";
+    if (element && element.closest(".button")) {
+
+        status.textContent = "OK = seleziona";
+
+    } else {
+
+        status.textContent = "Mouse pronto";
 
     }
 }
 
-document.addEventListener("keydown", function(e) {
 
-    if (e.key === "ArrowLeft")  x -= step;
-    if (e.key === "ArrowRight") x += step;
+function checkScroll() {
 
-    if (e.key === "ArrowUp") {
+    const margin = 100;
 
-        y -= step;
+    if (y > window.innerHeight - margin) {
 
-        if (y < 150) {
-            window.scrollBy(0,-step);
-            y = 150;
-        }
+        window.scrollBy({
+            top: 35,
+            behavior: "auto"
+        });
+
     }
 
-    if (e.key === "ArrowDown") {
+    if (y < margin) {
 
-        y += step;
+        window.scrollBy({
+            top: -35,
+            behavior: "auto"
+        });
 
-        if (y > innerHeight - 150) {
-            window.scrollBy(0,step);
-            y = innerHeight - 150;
-        }
+    }
+}
+
+
+function clickAtCursor() {
+
+    const element = document.elementFromPoint(x, y);
+
+    if (!element)
+        return;
+
+    const button = element.closest(".button");
+
+    if (button) {
+
+        button.classList.add("selected");
+
+        button.textContent = "SELEZIONATO ✓";
+
+        status.textContent = "CLICK!";
+
     }
 
-    if (e.key === "Enter" || e.key === "OK") {
-        clickCursor();
+}
+
+
+document.addEventListener("keydown", function(event) {
+
+    switch (event.key) {
+
+        case "ArrowLeft":
+
+            x -= speed;
+
+            break;
+
+
+        case "ArrowRight":
+
+            x += speed;
+
+            break;
+
+
+        case "ArrowUp":
+
+            y -= speed;
+
+            break;
+
+
+        case "ArrowDown":
+
+            y += speed;
+
+            break;
+
+
+        case "Enter":
+
+        case "OK":
+
+        case "Accept":
+
+            clickAtCursor();
+
+            break;
+
     }
 
-    x = Math.max(10,Math.min(innerWidth-10,x));
-    y = Math.max(10,Math.min(innerHeight-10,y));
 
-    draw();
+    /* limite sinistro */
+
+    if (x < 5)
+        x = 5;
+
+
+    /* limite destro */
+
+    if (x > window.innerWidth - 5)
+        x = window.innerWidth - 5;
+
+
+    /* limite superiore */
+
+    if (y < 5)
+        y = 5;
+
+
+    /* limite inferiore */
+
+    if (y > window.innerHeight - 5)
+        y = window.innerHeight - 5;
+
+
+    updateCursor();
 
 });
 
-draw();
+
+updateCursor();
 
 </script>
 

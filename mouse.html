@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<title>VIDAA Mouse - Web Test</title>
+<title>VIDAA Mouse Test</title>
 
 <style>
 html, body {
@@ -12,15 +12,9 @@ html, body {
     width: 100%;
     height: 100%;
     overflow: hidden;
-    background: black;
-}
-
-iframe {
-    position: fixed;
-    inset: 0;
-    width: 100%;
-    height: 100%;
-    border: 0;
+    background: #111;
+    color: white;
+    font-family: Arial, sans-serif;
 }
 
 #cursor {
@@ -34,37 +28,31 @@ iframe {
     border-radius: 50%;
 
     z-index: 999999;
-
     pointer-events: none;
 
     transform: translate(-50%, -50%);
 }
+
+#webButton {
+    position: fixed;
+
+    right: 40px;
+    top: 40px;
+
+    z-index: 999998;
+
+    padding: 25px 40px;
+
+    font-size: 28px;
+}
 </style>
 </head>
-<button
-    id="webButton"
-    style="
-        position:fixed;
-        right:40px;
-        top:40px;
-        z-index:999998;
-        padding:25px 40px;
-        font-size:28px;
-    "
->
-    APRI WIKIPEDIA
-</button>
 
-<script>
-document.getElementById("webButton").onclick = function() {
-    location.href = "https://it.wikipedia.org/wiki/Italia";
-};
-</script>
 <body>
 
-<iframe
-    src="https://it.wikipedia.org/wiki/Italia">
-</iframe>
+<button id="webButton">
+    APRI WIKIPEDIA
+</button>
 
 <div id="cursor"></div>
 
@@ -76,11 +64,26 @@ let y = window.innerHeight / 2;
 const speed = 22;
 
 const cursor = document.getElementById("cursor");
+const webButton = document.getElementById("webButton");
+
 
 function updateCursor() {
 
     cursor.style.left = x + "px";
     cursor.style.top = y + "px";
+
+}
+
+
+function clickAtCursor() {
+
+    const element = document.elementFromPoint(x, y);
+
+    if (element === webButton) {
+
+        location.href = "https://it.wikipedia.org/wiki/Italia";
+
+    }
 
 }
 
@@ -104,7 +107,14 @@ document.addEventListener("keydown", function(event) {
         case "ArrowDown":
             y += speed;
             break;
+
+        case "Enter":
+        case "OK":
+        case "Accept":
+            clickAtCursor();
+            break;
     }
+
 
     if (x < 5)
         x = 5;
@@ -118,9 +128,11 @@ document.addEventListener("keydown", function(event) {
     if (y > window.innerHeight - 5)
         y = window.innerHeight - 5;
 
+
     updateCursor();
 
 });
+
 
 updateCursor();
 

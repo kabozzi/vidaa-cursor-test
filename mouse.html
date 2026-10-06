@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>VIDAA Mouse Test</title>
+<style>
+* { box-sizing:border-box; }
+
+html,body {
+    margin:0;
+    padding:0;
+    background:#111;
+    color:white;
+    font-family:Arial,sans-serif;
+}
+
+#page {
+    padding:40px;
+    min-height:2000px;
+}
+
+h1 {
+    font-size:42px;
+}
+
+p {
+    font-size:28px;
+}
+
+.button {
+    display:block;
+    width:500px;
+    margin:40px 0;
+    padding:35px;
+    background:#333;
+    border-radius:18px;
+    font-size:32px;
+    text-align:center;
+}
+
+.button.selected {
+    outline:6px solid yellow;
+}
+
+#cursor {
+    position:fixed;
+    width:30px;
+    height:30px;
+    border:4px solid red;
+    border-radius:50%;
+    pointer-events:none;
+    z-index:999999;
+    transform:translate(-50%,-50%);
+}
+</style>
+</head>
+
+<body>
+
+<div id="page">
+
+<h1>VIDAA Mouse Test</h1>
+
+<p>Muovi il cursore con le frecce.</p>
+<p>Premi OK per cliccare.</p>
+
+<div class="button">PULSANTE 1</div>
+<div class="button">PULSANTE 2</div>
+<div class="button">PULSANTE 3</div>
+<div class="button">PULSANTE 4</div>
+<div class="button">PULSANTE 5</div>
+<div class="button">PULSANTE 6</div>
+<div class="button">PULSANTE 7</div>
+<div class="button">PULSANTE 8</div>
+
+</div>
+
+<div id="cursor"></div>
+
+<script>
+
+let x = innerWidth / 2;
+let y = 250;
+
+const step = 20;
+const cursor = document.getElementById("cursor");
+
+function draw() {
+    cursor.style.left = x + "px";
+    cursor.style.top = y + "px";
+}
+
+function clickCursor() {
+
+    const element = document.elementFromPoint(x,y);
+
+    if (element && element.classList.contains("button")) {
+
+        element.style.background = "#087f23";
+        element.textContent = "SELEZIONATO ✓";
+
+    }
+}
+
+document.addEventListener("keydown", function(e) {
+
+    if (e.key === "ArrowLeft")  x -= step;
+    if (e.key === "ArrowRight") x += step;
+
+    if (e.key === "ArrowUp") {
+
+        y -= step;
+
+        if (y < 150) {
+            window.scrollBy(0,-step);
+            y = 150;
+        }
+    }
+
+    if (e.key === "ArrowDown") {
+
+        y += step;
+
+        if (y > innerHeight - 150) {
+            window.scrollBy(0,step);
+            y = innerHeight - 150;
+        }
+    }
+
+    if (e.key === "Enter" || e.key === "OK") {
+        clickCursor();
+    }
+
+    x = Math.max(10,Math.min(innerWidth-10,x));
+    y = Math.max(10,Math.min(innerHeight-10,y));
+
+    draw();
+
+});
+
+draw();
+
+</script>
+
+</body>
+</html>

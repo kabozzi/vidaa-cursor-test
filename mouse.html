@@ -1,4 +1,190 @@
-Tasto ricevuto:
-key = ...
-keyCode = ...
-which = ...
+<!DOCTYPE html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>VIDAA Mouse Test</title>
+
+<style>
+html, body {
+    margin: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    background: black;
+}
+
+iframe {
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+#cursor {
+    position: fixed;
+
+    width: 34px;
+    height: 34px;
+
+    background: red;
+    border: 4px solid white;
+    border-radius: 50%;
+
+    z-index: 999999;
+
+    pointer-events: none;
+
+    transform: translate(-50%, -50%);
+}
+</style>
+</head>
+
+<body>
+
+<iframe
+    id="web"
+    src="https://it.wikipedia.org/wiki/Italia">
+</iframe>
+
+<div id="cursor"></div>
+
+<script>
+
+const iframe = document.getElementById("web");
+const cursor = document.getElementById("cursor");
+
+let x = window.innerWidth / 2;
+let y = window.innerHeight / 2;
+
+const speed = 22;
+
+
+function updateCursor() {
+
+    cursor.style.left = x + "px";
+    cursor.style.top = y + "px";
+
+}
+
+
+function sendKey(code, key) {
+
+    iframe.contentWindow.postMessage({
+        type: "VIDAA_KEY",
+        key: key,
+        code: code
+    }, "*");
+
+}
+
+
+document.addEventListener("keydown", function(event) {
+
+    let code = event.keyCode;
+    let key = event.key;
+
+    /*
+     * Muoviamo il nostro cursore
+     */
+
+    if (key === "ArrowLeft") {
+
+        x -= speed;
+
+    }
+
+    else if (key === "ArrowRight") {
+
+        x += speed;
+
+    }
+
+    else if (key === "ArrowUp") {
+
+        y -= speed;
+
+    }
+
+    else if (key === "ArrowDown") {
+
+        y += speed;
+
+    }
+
+
+    /*
+     * OK
+     */
+
+    else if (
+        key === "Enter" ||
+        key === "OK"
+    ) {
+
+        sendKey(13, "Enter");
+
+    }
+
+
+    /*
+     * Limiti cursore
+     */
+
+    if (x < 5)
+        x = 5;
+
+    if (x > window.innerWidth - 5)
+        x = window.innerWidth - 5;
+
+    if (y < 5)
+        y = 5;
+
+    if (y > window.innerHeight - 5)
+        y = window.innerHeight - 5;
+
+
+    /*
+     * Inoltriamo le frecce
+     * anche all'iframe
+     */
+
+    if (
+        key === "ArrowLeft" ||
+        key === "ArrowRight" ||
+        key === "ArrowUp" ||
+        key === "ArrowDown"
+    ) {
+
+        sendKey(code, key);
+
+    }
+
+
+    updateCursor();
+
+});
+
+
+/*
+ * Quando l'iframe viene caricato,
+ * proviamo a dargli il focus.
+ */
+
+iframe.addEventListener("load", function() {
+
+    try {
+        iframe.contentWindow.focus();
+    } catch(e) {}
+
+});
+
+
+updateCursor();
+
+</script>
+
+</body>
+</html>
